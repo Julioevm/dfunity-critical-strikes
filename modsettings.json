@@ -1,4 +1,40 @@
 {
-    "Version": null,
-    "Sections": []
+    "Version": "1",
+    "Sections": [
+        {
+            "Name": "criticalHits",
+            "Description": "Settings for the Critical Hits mod.",
+            "IsAdvanced": false,
+            "Keys": [
+                {
+                    "Min": 3,
+                    "Max": 6,
+                    "Value": 4,
+                    "Name": "playerChance",
+                    "Description": "The player critical strike skill is divided by this number.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 4,
+                    "Max": 8,
+                    "Value": 7,
+                    "Name": "enemyChance",
+                    "Description": "The enemy critical strike skill is divided by this number.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                },
+                {
+                    "Min": 3,
+                    "Max": 9,
+                    "Value": 6,
+                    "Name": "criticalDamageBase",
+                    "Description": "Divide the critical strike hit by 25 then multiply by this number.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
+                }
+            ],
+            "$version": "v1"
+        }
+    ]
 }

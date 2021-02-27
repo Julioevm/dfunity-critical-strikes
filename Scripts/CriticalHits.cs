@@ -2,7 +2,7 @@
 // Copyright:       Copyright (C) 2021 Reaven
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Author:          Reaven
-// Version:			0.1		
+// Version:			0.2		
 
 using DaggerfallConnect;
 using DaggerfallWorkshop;
@@ -23,6 +23,9 @@ namespace CriticalHits
     public class CriticalHits : MonoBehaviour
     {
         static Mod mod;
+        static int criticalDamageBase;
+        static int playerDivideBy;
+        static int enemyDivideBy;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
@@ -34,10 +37,11 @@ namespace CriticalHits
 
         void Awake()
         {
-
-
+            ModSettings settings = mod.GetSettings();
+            criticalDamageBase = settings.GetValue<int>("criticalHits", "criticalDamageBase");
+            playerDivideBy = settings.GetValue<int>("criticalHits", "playerChance");
+            enemyDivideBy = settings.GetValue<int>("criticalHits", "enemyChance");
             InitMod();
-
             mod.IsReady = true;
         }
 
@@ -46,7 +50,11 @@ namespace CriticalHits
             Debug.Log("Begin mod init: Critical Hits");
             FormulaHelper.RegisterOverride(mod, "CalculateAttackDamage", (Func<DaggerfallEntity, DaggerfallEntity, bool, int, DaggerfallUnityItem, int>)CalculateAttackDamage);
             FormulaHelper.RegisterOverride(mod, "CalculateSkillsToHit", (Func<DaggerfallEntity, DaggerfallEntity, int>)CalculateSkillsToHit);
-
+            #if UNITY_EDITOR
+                Debug.LogFormat("criticalDamageBase: {0}", criticalDamageBase);
+                Debug.LogFormat("playerDivideBy: {0}", playerDivideBy);
+                Debug.LogFormat("enemyDivideBy: {0}", enemyDivideBy);
+            #endif
         }
 
         public static int CalculateAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, bool isEnemyFacingAwayFromPlayer, int weaponAnimTime, DaggerfallUnityItem weapon)
@@ -114,11 +122,14 @@ namespace CriticalHits
             {
                 int criticalStrikeSkill = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike);
                 critBonusDamage = GetPlayerCritDamage(criticalStrikeSkill);
-                Debug.LogFormat("1. critical strike bonus damage: {0}", critBonusDamage);
                 critHitAddi = (criticalStrikeSkill / 4);
-                Debug.LogFormat("2. critical strike bonus toHit: {0}", critHitAddi);
                 chanceToHitMod += critHitAddi;
-                Debug.LogFormat("3. Final toHit: {0}", chanceToHitMod);
+                
+                #if UNITY_EDITOR
+                     Debug.LogFormat("1. critical strike bonus damage: {0}", critBonusDamage);
+                     Debug.LogFormat("2. critical strike bonus toHit: {0}", critHitAddi);
+                     Debug.LogFormat("3. Final toHit: {0}", chanceToHitMod);
+                #endif
             }
 
 
@@ -227,13 +238,16 @@ namespace CriticalHits
                 }
             }
 
-
-            Debug.LogFormat("Standard Damage = {0}", damage);
+            #if UNITY_EDITOR
+                Debug.LogFormat("Standard Damage = {0}", damage);
+            #endif
 
             if (critSuccess)
             {
                 damage += critBonusDamage;
-                Debug.LogFormat("Critical damage = {0}", damage);
+                #if UNITY_EDITOR
+                    Debug.LogFormat("Critical damage = {0}", damage);
+                #endif
             }
 
             damage = Mathf.Max(0, damage);
@@ -257,7 +271,6 @@ namespace CriticalHits
                     }
                 }
             }
-            // Debug.LogFormat("Damage {0} applied, animTime={1}  ({2})", damage, weaponAnimTime, GameManager.Instance.WeaponManager.ScreenWeapon.WeaponState);
 
             return damage;
         }
@@ -287,19 +300,19 @@ namespace CriticalHits
             int criticalChance = 0;
 
             if (attacker == player)
-                criticalChance = (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / 4) + attackerLuckBonus;
-            else // Enemies have a lower chance than the player
-                criticalChance = (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / 5) + attackerLuckBonus;
+                criticalChance = (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / playerDivideBy) + attackerLuckBonus;
+            else
+                criticalChance = (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / enemyDivideBy) + attackerLuckBonus;
 
-            Debug.LogFormat("Critical chance: {0}", criticalChance);
-
+            #if UNITY_EDITOR
+                Debug.LogFormat("Critical chance: {0}", criticalChance);
+            #endif
             return Dice100.SuccessRoll(criticalChance); // Player has a 25% chance of critting at level 100. 32% with 75 luck, and 45% with 100 luck.
         }
 
         private static int GetPlayerCritDamage(int playerSkill)
         {
             int critDamage = 0;
-            int criticalDamageBase = 6; //TODO: Turn this into a configurable setting
 
             if (playerSkill < 98)
             {
