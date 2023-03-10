@@ -23,9 +23,11 @@ namespace CriticalHits
     public class CriticalHits : MonoBehaviour
     {
         static Mod mod;
-        static int criticalDamageBase;
+        static int criticalDamageBasePlayer;
+        static int criticalDamageBaseEnemy;
         static int playerDivideBy;
         static int enemyDivideBy;
+        private static bool showCritMessage;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
@@ -38,9 +40,11 @@ namespace CriticalHits
         void Awake()
         {
             ModSettings settings = mod.GetSettings();
-            criticalDamageBase = settings.GetValue<int>("criticalHits", "criticalDamageBase");
+            criticalDamageBasePlayer = settings.GetValue<int>("criticalHits", "criticalDamageBasePlayer");
+            criticalDamageBaseEnemy = settings.GetValue<int>("criticalHits", "criticalDamageBaseEnemy");
             playerDivideBy = settings.GetValue<int>("criticalHits", "playerChance");
             enemyDivideBy = settings.GetValue<int>("criticalHits", "enemyChance");
+            showCritMessage = settings.GetBool("criticalHits", "showCritMessage");
             InitMod();
             mod.IsReady = true;
         }
@@ -51,7 +55,8 @@ namespace CriticalHits
             FormulaHelper.RegisterOverride(mod, "CalculateAttackDamage", (Func<DaggerfallEntity, DaggerfallEntity, bool, int, DaggerfallUnityItem, int>)CalculateAttackDamage);
             FormulaHelper.RegisterOverride(mod, "CalculateSkillsToHit", (Func<DaggerfallEntity, DaggerfallEntity, int>)CalculateSkillsToHit);
             #if UNITY_EDITOR
-                Debug.LogFormat("criticalDamageBase: {0}", criticalDamageBase);
+                Debug.LogFormat("criticalDamageBasePlayer: {0}", criticalDamageBasePlayer);
+                Debug.LogFormat("criticalDamageBaseEnemy: {0}", criticalDamageBaseEnemy);
                 Debug.LogFormat("playerDivideBy: {0}", playerDivideBy);
                 Debug.LogFormat("enemyDivideBy: {0}", enemyDivideBy);
             #endif
@@ -121,10 +126,17 @@ namespace CriticalHits
             if (critSuccess)
             {
                 int criticalStrikeSkill = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike);
-                critBonusDamage = GetPlayerCritDamage(criticalStrikeSkill);
                 critHitAddi = (criticalStrikeSkill / 4);
                 chanceToHitMod += critHitAddi;
-
+                if (attacker == player)
+                {
+                    if (showCritMessage) DaggerfallUI.Instance.PopupMessage("You strike with precision!");
+                    critBonusDamage = GetCritDamage(criticalStrikeSkill,criticalDamageBasePlayer);
+                }
+                else
+                {
+                    critBonusDamage = GetCritDamage(criticalStrikeSkill,criticalDamageBaseEnemy);
+                }
                 #if UNITY_EDITOR
                      Debug.LogFormat("1. critical strike bonus damage: {0}", critBonusDamage);
                      Debug.LogFormat("2. critical strike bonus toHit: {0}", critHitAddi);
@@ -296,11 +308,10 @@ namespace CriticalHits
         private static bool IsCriticalStrike(DaggerfallEntity attacker)
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
-            int attackerLuckBonus = (int)Mathf.Floor(attacker.Stats.LiveLuck / 10);
-            short criticalStrikeSkill = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike);
-            int divider = (attacker == player) ? playerDivideBy : enemyDivideBy;
-
-            int criticalChance = (criticalStrikeSkill / divider) + attackerLuckBonus;
+            var attackerLuckBonus = (int)Mathf.Floor(attacker.Stats.LiveLuck / 10);
+            var criticalStrikeSkill = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike);
+            var divider = (attacker == player) ? playerDivideBy : enemyDivideBy;
+            var criticalChance = (criticalStrikeSkill / divider) + attackerLuckBonus;
 
             #if UNITY_EDITOR
                 Debug.LogFormat("{0} Critical chance: {1}. Skill: {2}/{3} + {4}", attacker.Name, criticalChance, criticalStrikeSkill, divider ,attackerLuckBonus);
@@ -308,20 +319,11 @@ namespace CriticalHits
             return Dice100.SuccessRoll(criticalChance); // Player has a 25% chance of critting at level 100. 32% with 75 luck, and 45% with 100 luck.
         }
 
-        private static int GetPlayerCritDamage(int playerSkill)
+        private static int GetCritDamage(int playerSkill, int baseCritDamage)
         {
-            int critDamage = 0;
+            var critDamage = playerSkill < 98 ? Mathf.RoundToInt(playerSkill / 25) :  6;
 
-            if (playerSkill < 98)
-            {
-                critDamage = Mathf.RoundToInt(playerSkill / 25);
-            }
-            else
-            {
-                critDamage = 6;
-            }
-
-            return critDamage * criticalDamageBase;
+            return critDamage * baseCritDamage;
         }
 
         private static bool IsRingOfNamira(DaggerfallUnityItem item)
