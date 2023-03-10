@@ -318,7 +318,7 @@ namespace CriticalHits
             }
             else
             {
-                critDamage = 30;
+                critDamage = 6;
             }
 
             return critDamage * criticalDamageBase;
