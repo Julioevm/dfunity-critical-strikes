@@ -12,7 +12,7 @@
                     "Value": 5,
                     "Name": "playerChance",
                     "Description": "The player critical strike skill is divided by this number. Lower means you will land more crits!",
-                    "$version": "v2",
+                    "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 },
                 {
@@ -21,7 +21,7 @@
                     "Value": 7,
                     "Name": "enemyChance",
                     "Description": "The enemy critical strike skill is divided by this number. Lower means they will land more crits!",
-                    "$version": "v2",
+                    "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 },
                 {
@@ -30,7 +30,7 @@
                     "Value": 4,
                     "Name": "criticalDamageBasePlayer",
                     "Description": "Divide the critical strike Skill by 25 then multiply by this number to calculate Damage.",
-                    "$version": "v2",
+                    "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 },
                 {
@@ -39,7 +39,7 @@
                     "Value": 3,
                     "Name": "criticalDamageBaseEnemy",
                     "Description": "Divide the critical strike Skill by 25 then multiply by this number to calculate Damage.",
-                    "$version": "v2",
+                    "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 },
                 {
