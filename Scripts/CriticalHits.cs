@@ -2,7 +2,7 @@
 // Copyright:       Copyright (C) 2021 Reaven
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Author:          Reaven
-// Version:			0.2		
+// Version:			0.3
 
 using DaggerfallConnect;
 using DaggerfallWorkshop;
@@ -124,7 +124,7 @@ namespace CriticalHits
                 critBonusDamage = GetPlayerCritDamage(criticalStrikeSkill);
                 critHitAddi = (criticalStrikeSkill / 4);
                 chanceToHitMod += critHitAddi;
-                
+
                 #if UNITY_EDITOR
                      Debug.LogFormat("1. critical strike bonus damage: {0}", critBonusDamage);
                      Debug.LogFormat("2. critical strike bonus toHit: {0}", critHitAddi);
@@ -233,7 +233,7 @@ namespace CriticalHits
                 // Handle poisoned weapons
                 if (damage > 0 && weapon.poisonType != Poisons.None)
                 {
-                    FormulaHelper.InflictPoison(target, weapon.poisonType, false);
+                    FormulaHelper.InflictPoison(attacker, target, weapon.poisonType, false);
                     weapon.poisonType = Poisons.None;
                 }
             }
