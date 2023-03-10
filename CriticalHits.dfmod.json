@@ -2,6 +2,7 @@
     "ModTitle": "Critical Hits",
     "ModVersion": "0.3",
     "ModAuthor": "Reaven",
+    "ContactInfo": "reaven666@gmail.com",
     "DFUnity_Version": "0.14.5",
     "ModDescription": "A simple mod that changes critical hits to inflict additional damage instead of increasing hit chance.",
     "GUID": "8c30e04a-550a-4380-a2b6-4bd0a912c8b5",

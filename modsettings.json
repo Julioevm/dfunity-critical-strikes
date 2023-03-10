@@ -7,20 +7,20 @@
             "IsAdvanced": false,
             "Keys": [
                 {
-                    "Min": 3,
-                    "Max": 6,
+                    "Min": 2,
+                    "Max": 8,
                     "Value": 4,
                     "Name": "playerChance",
-                    "Description": "The player critical strike skill is divided by this number.",
+                    "Description": "The player critical strike skill is divided by this number. Lower means you will land more crits!",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 },
                 {
-                    "Min": 4,
-                    "Max": 8,
+                    "Min": 2,
+                    "Max": 10,
                     "Value": 7,
                     "Name": "enemyChance",
-                    "Description": "The enemy critical strike skill is divided by this number.",
+                    "Description": "The enemy critical strike skill is divided by this number. Lower means they will land more crits!",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.SliderIntKey"
                 },

@@ -297,15 +297,13 @@ namespace CriticalHits
         {
             PlayerEntity player = GameManager.Instance.PlayerEntity;
             int attackerLuckBonus = (int)Mathf.Floor(attacker.Stats.LiveLuck / 10);
-            int criticalChance = 0;
+            short criticalStrikeSkill = attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike);
+            int divider = (attacker == player) ? playerDivideBy : enemyDivideBy;
 
-            if (attacker == player)
-                criticalChance = (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / playerDivideBy) + attackerLuckBonus;
-            else
-                criticalChance = (attacker.Skills.GetLiveSkillValue(DFCareer.Skills.CriticalStrike) / enemyDivideBy) + attackerLuckBonus;
+            int criticalChance = (criticalStrikeSkill / divider) + attackerLuckBonus;
 
             #if UNITY_EDITOR
-                Debug.LogFormat("Critical chance: {0}", criticalChance);
+                Debug.LogFormat("{0} Critical chance: {1}. Skill: {2}/{3} + {4}", attacker.Name, criticalChance, criticalStrikeSkill, divider ,attackerLuckBonus);
             #endif
             return Dice100.SuccessRoll(criticalChance); // Player has a 25% chance of critting at level 100. 32% with 75 luck, and 45% with 100 luck.
         }
