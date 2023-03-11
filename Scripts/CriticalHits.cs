@@ -137,11 +137,6 @@ namespace CriticalHits
                 {
                     critBonusDamage = GetCritDamage(criticalStrikeSkill,criticalDamageBaseEnemy);
                 }
-                #if UNITY_EDITOR
-                     Debug.LogFormat("1. critical strike bonus damage: {0}", critBonusDamage);
-                     Debug.LogFormat("2. critical strike bonus toHit: {0}", critHitAddi);
-                     Debug.LogFormat("3. Final toHit: {0}", chanceToHitMod);
-                #endif
             }
 
 
@@ -249,10 +244,6 @@ namespace CriticalHits
                     weapon.poisonType = Poisons.None;
                 }
             }
-
-            #if UNITY_EDITOR
-                Debug.LogFormat("Standard Damage = {0}", damage);
-            #endif
 
             if (critSuccess)
             {
